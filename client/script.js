@@ -1,3 +1,4 @@
+const { response } = require("express");
 
 const base_url = "http://localhost:3000/"
 
@@ -20,10 +21,12 @@ function auchtenticate() {
     $('#logreg-forms').show()
     $('#navbar').hide()
     $('#main-page-cards').hide()
+    $('#addMovie').hide()
   } else {
     $('#navbar').show()
     $('#main-page-cards').show()
     $('#logreg-forms').hide()
+    $('#addMovie').hide()
     getMyMovie()
     // $('#logreg-forms #cancel_reset').hide()
     // $('#logreg-forms #btn-signup').hide()
@@ -95,26 +98,133 @@ function getMyMovie() {
       access_token: localStorage.getItem("access_token")
     }
   })
-  .done(response => {
+  .done(movies => {
+    $('#main-page-cards').empty();
     //akan looping semua movies punya dia
+    movies.forEach(movie => {
+      $('#main-page-cards').append(`
+      <div id="cards-${movie.id}">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+        <div class="card-body">
+          <h5 class="card-title">${movie.original_title}</h5>
+          <p class="card-text">${movie.overview}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">${movie.vote_average}</li>
+          <li class="list-group-item">${movie.year}</li>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">Watched</a>
+          <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
+        </div>
+      </div>
+    </div>
+      `)
+    })
   })
   .fail((xhr, text)=>{ 
-    alert(xhr.responseJSON)
     console.log(xhr, text);
   })
   
 }
 
-function addToMyMovie() {
+
+function getRecommendedMovie() {
+  $.ajax({
+    url: base_url + 'movies',
+    method: "GET",
+    headers: {
+      access_token: localStorage.getItem("access_token")
+    }
+  })
+  .done(movies => {
+    $('#recommended-page-cards').empty();
+    //akan looping semua movies punya dia
+    movies.forEach(movie => {
+      $('#recommended-page-cards').append(`
+      <div id="cards-${movie.id}">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+        <div class="card-body">
+          <h5 class="card-title">${movie.original_title}</h5>
+          <p class="card-text">${movie.overview}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">${movie.vote_average}</li>
+          <li class="list-group-item">${movie.year}</li>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">Watched</a>
+          <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
+        </div>
+      </div>
+    </div>
+      `)
+    })
+  })
+  .fail((xhr, text)=>{ 
+    console.log(xhr, text);
+  })
   
 }
 
-function patchMyMovie() {
-  
+
+
+function addToMyMovie(movie_title) {
+  $.ajax({
+    url: base_url+"movies/movie",
+    method: "POST",
+    headers: {
+      access_token: localStorage.getItem('access_token')
+    },
+    data: {
+      title: movie_title,
+      status: false
+    }
+  })
+  .done(res => {
+    auchtenticate();
+  })
+  .fail((xhr,text)=>{
+    alert(xhr.responseJSON.error)
+    console.log(xhr, text);
+  })
 }
 
-function deleteMyMovie() {
+function patchMyMovie(id) {
+  $.ajax({
+    url: base_url + id,
+    method: "PATCH",
+    headers: {
+      access_token: localStorage.getItem("access_token")
+    }
+  })
+  .done(response=> {
+    getMyMovie()
+  })
+  .fail((xhr,text)=>{
+    console.log(xhr, text);
+  })
+
+}
+
+function deleteMyMovie(id) {
   
+  $.ajax({
+    url: base_url + "movies/" + id,
+    method: "DELETE",
+    headers: {
+      token: localStorage.getItem('access_token')
+    }
+  })
+  .done(()=>{
+    $(`#card-${id}`).remove()
+  })
+  .fail((xhr,text)=>{
+    alert(xhr.responseJSON.error)
+    console.log(xhr, text);
+  })
 }
 
 function logout() {
@@ -141,8 +251,21 @@ $(document).ready(()=>{
     register()
   })
 
+  $("#homeBtn").on('click', ()=> {
+    getMyMovie()
+  })
 
+  // $('#addMovieBtn').on('click', ()=> {
+  //   $("#main-page-cards").hide()
+  //   $('#logreg-forms').hide()
+  // })
 
+  $('#addMovieBtn').on('click', ()=> {
+    $('#addMovie').toggle()
+    $("#main-page-cards").hide()
+    $('#logreg-forms').hide()
+    getMyMovie()
+  })
 
   //tombol logout
   $('#logoutbtn').on('click', (e)=>{
