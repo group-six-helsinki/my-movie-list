@@ -11,11 +11,28 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasMany(models.Movie, { foreignKey: 'UserID' })
     }
   };
   User.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
+    email: {
+      type: DataTypes.STRING,
+      validate: {
+        isEmail: {
+          args: true,
+          msg: 'Please enter a valid email address'
+        }
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [6],
+          msg: 'Please enter a 6 characters password'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'User',
