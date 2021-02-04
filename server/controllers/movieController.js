@@ -1,5 +1,7 @@
 class ControllerMovie {
-  static showAll(req, res, next) {}
+  static showAll(req, res, next) {
+    res.send("haallooo");
+  }
 
   static createMovie(req, res, next) {}
 
