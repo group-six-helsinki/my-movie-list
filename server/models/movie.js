@@ -11,12 +11,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Movie.belongsTo(models.User, { foreignKey: 'UserID' })
     }
   };
   Movie.init({
-    title: DataTypes.STRING,
-    status: DataTypes.BOOLEAN,
-    UserID: DataTypes.INTEGER
+    title: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'Please enter a title for movie/anime'
+        }
+      }
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      validate: {
+        isIn: {
+          args: [[true, false]],
+          msg: 'Please enter typedata boolean'
+        }
+      }
+    },
+    UserID: {
+      type: DataTypes.INTEGER,
+      validate: {
+        allowNull: {
+          args: false,
+          msg: 'Please enter a user ID'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Movie',
