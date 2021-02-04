@@ -127,7 +127,7 @@ function getMyMovie() {
           <li class="list-group-item">${year}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">${status}</a>
+          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id, movie.status})">${status}</a>
           <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
         </div>
       </div>
@@ -154,7 +154,6 @@ function getRecommendedMovie() {
     $('#recommended-page-cards').empty();
     //akan looping semua movies punya dia
     movies.forEach(movie => {
-
       $('#recommended-page-cards').append(`
       <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
@@ -204,12 +203,15 @@ function addToMyMovie(movie_title) {
   })
 }
 
-function patchMyMovie(id) {
+function patchMyMovie(id, status) {
   $.ajax({
-    url: base_url + id,
+    url: base_url + `movies/${id}`,
     method: "PATCH",
     headers: {
       access_token: localStorage.getItem("access_token")
+    },
+    data: {
+      status
     }
   })
   .done(response=> {
@@ -222,7 +224,6 @@ function patchMyMovie(id) {
 }
 
 function deleteMyMovie(id) {
-  
   $.ajax({
     url: base_url + "movies/" + id,
     method: "DELETE",
