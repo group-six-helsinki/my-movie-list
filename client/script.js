@@ -25,17 +25,17 @@ function auchtenticate() {
     $('#main-page-cards').show()
     $('#logreg-forms').hide()
     getMyMovie()
-    $('#logreg-forms #cancel_reset').hide()
-    $('#logreg-forms #btn-signup').hide()
-    $('#logreg-forms #cancel_signup').hide()
+    // $('#logreg-forms #cancel_reset').hide()
+    // $('#logreg-forms #btn-signup').hide()
+    // $('#logreg-forms #cancel_signup').hide()
   }
 }
 
 
 
 function register() {
-  const email = $('user-email').val()
-  const password = $('user-pass').val()
+  const email = $('#user-email').val()
+  const password = $('#user-pass').val()
   console.log(email, password);
   $.ajax({
     url: base_url + 'register',
@@ -47,20 +47,26 @@ function register() {
   })
   .done((data)=>{
     console.log(data);
-    $('#logreg-forms').show()
+    $('#logreg-forms .form-signin').show()
+    $('#logreg-forms .form-signup').hide()
   })
   .fail((xhr, text)=>{
-    alert(xhr.responseJSON)
+    alert(xhr.responseJSON.name)
     console.log(xhr, text);
+  })
+  .always(()=>{
+    $('#user-email').val("")
+    $('#user-pass').val("")
   })
 
 }
 
 function login() {
-  const email = $('inputEmail').val()
-  const password = $('inputPassword').val()
+  const email = $('#inputEmail').val()
+  const password = $('#inputPassword').val()
+  //console.log(email, password);
   $.ajax({
-    url: base_url + '/login',
+    url: base_url + 'login',
     method: "POST",
     data: {
       email,
@@ -68,10 +74,16 @@ function login() {
     }
   })
   .done(response=>{
-    localStorage.setItem('acces_token', response.access_token)
+    //console.log(response);
+    localStorage.setItem('access_token', response.access_token)
+    auchtenticate()
   })
   .fail((xhr, text)=> {
     console.log(xhr, text);
+  })
+  .always(()=>{
+    $('#inputEmail').val("")
+    $('#inputPassword').val("")
   })
 }
 
@@ -90,6 +102,7 @@ function getMyMovie() {
     alert(xhr.responseJSON)
     console.log(xhr, text);
   })
+  
 }
 
 function addToMyMovie() {
@@ -106,7 +119,7 @@ function deleteMyMovie() {
 
 function logout() {
   localStorage.clear()
-  authenticate()
+  auchtenticate()
 }
 
 
@@ -123,7 +136,7 @@ $(document).ready(()=>{
     login()
   })
 
-  $('#registerbtn').on('submit', (e)=> {
+  $('#registerbtn').on('click', (e)=> {
     e.preventDefault()
     register()
   })
@@ -135,6 +148,7 @@ $(document).ready(()=>{
   $('#logoutbtn').on('click', (e)=>{
     e.preventDefault()
     logout()
+    
   })
 })
 
