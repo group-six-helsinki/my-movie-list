@@ -29,7 +29,7 @@ class ControllerUser {
           throw {
             message: "Wrong password or email",
             status: 401,
-            name: "login error",
+            name: "LoginError",
           };
         }
         const access_token = generateToken({
