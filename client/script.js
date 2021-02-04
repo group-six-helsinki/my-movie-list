@@ -1,4 +1,4 @@
-const { response } = require("express");
+//const { response } = require("express");
 
 const base_url = "http://localhost:3000/"
 
@@ -90,6 +90,11 @@ function login() {
   })
 }
 
+function formatYear(date) {
+  let splittedDate= date.split('-');
+  return splittedDate[0]
+}
+
 function getMyMovie() {
   $.ajax({
     url: base_url + 'movies',
@@ -102,9 +107,16 @@ function getMyMovie() {
     $('#main-page-cards').empty();
     //akan looping semua movies punya dia
     movies.forEach(movie => {
+      let status;
+      if (movie.status){
+        status = 'watched'
+      } else {
+        status = 'watch later'
+      }
+      let year = formatYear(movie.date);
       $('#main-page-cards').append(`
       <div id="cards-${movie.id}">
-      <div class="card" style="width: 18rem;">
+      <div class="card p-3" style="width: 18rem;">
         <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
         <div class="card-body">
           <h5 class="card-title">${movie.original_title}</h5>
@@ -112,10 +124,10 @@ function getMyMovie() {
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">${movie.vote_average}</li>
-          <li class="list-group-item">${movie.year}</li>
+          <li class="list-group-item">${year}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">Watched</a>
+          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">${status}</a>
           <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
         </div>
       </div>
@@ -142,12 +154,13 @@ function getRecommendedMovie() {
     $('#recommended-page-cards').empty();
     //akan looping semua movies punya dia
     movies.forEach(movie => {
+
       $('#recommended-page-cards').append(`
-      <div id="cards-${movie.id}">
+      <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
         <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
         <div class="card-body">
-          <h5 class="card-title">${movie.original_title}</h5>
+          <h5 class="card-title">${movie.title}</h5>
           <p class="card-text">${movie.overview}</p>
         </div>
         <ul class="list-group list-group-flush">
@@ -155,8 +168,7 @@ function getRecommendedMovie() {
           <li class="list-group-item">${movie.year}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">Watched</a>
-          <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
+          <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
         </div>
       </div>
     </div>
