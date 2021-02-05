@@ -179,19 +179,19 @@ function searchMovie() {
     //akan looping semua movies punya dia
     movies.forEach(movie => {
       $('#recommended-page-cards').append(`
-      <div class="recommended-movie">
+      <div class="recommended-movie" style="padding-right:5px; padding-left:5px; padding-top:5%;">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="movie poster" >
+        <img class="card-img-top" src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="movie poster" width=750 height=500 >
         <div class="card-body">
           <h5 class="card-title">${movie.title}</h5>
-          <p class="card-text">${movie.synopsis}</p>
+          <p class="card-text">${olahKata(movie.synopsis)}</p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">${movie.rating}</li>
-          <li class="list-group-item">${formatYear(movie.release_year)}</li>
+          <li class="list-group-item">Ratings: ${movie.rating}</li>
+          <li class="list-group-item">Year: ${formatYear(movie.release_year)}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
+          <a href="#" class="card-link" onclick="addToMyMovie('${movie.title}', '${movie.synopsis}', '${movie.poster}','${movie.rating}','${formatYear(movie.release_year)}',)">Add to My List</a>
         </div>
       </div>
     </div>
@@ -205,6 +205,20 @@ function searchMovie() {
     $('#title_search').val("")
   })
   
+}
+ //, movie.synopsis, movie.poster, movie.rating, formatYear(movie.release_year)
+function olahKata(descriptions) {
+  let str =''
+  for (let i = 0; i < descriptions.length; i++) {
+    if (i < 200) {
+      str += descriptions[i]
+    } else {
+      str += '...'
+      break
+    }
+    
+  }
+  return str
 }
 
 
@@ -253,20 +267,26 @@ function searchAnime() {
 }
 
 
-function addToMyMovie(movie_title) {
+function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year) {
+  //console.log(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year);
  //const movie_title = $('').val()
   $.ajax({
-    url: base_url+"movies/movie",
+    url: base_url+"movies",
     method: "POST",
     headers: {
       access_token: localStorage.getItem('access_token')
     },
     data: {
-      title: movie_title,
-      status: false
+      title_search: movie_title,
+      status: false,
+      synopsis: movie_synopsis,
+      poster: movie_poster,
+      rating: movie_rating,
+      release_year: movie_release_year
     }
   })
   .done(res => {
+    console.log(res);
     authenticate();
   })
   .fail((xhr,text)=>{
