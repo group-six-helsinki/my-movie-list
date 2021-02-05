@@ -9,7 +9,7 @@ class ControllerMovie {
       },
     })
       .then((movies) => {
-        console.log(movies);
+        //console.log(movies);
         if (movies.length <= 0) {
           throw { message: "Data not found", status: 404, name: "Custom" };
         }
@@ -133,10 +133,8 @@ class ControllerMovie {
       release_year: req.body.release_year
     }
     
-    //console.log(input);
     Movie.create(input)
       .then(movies => {
-        //console.log(movies, 'dari controllerrrrrrrrrrrrrrrr');
         res.status(201).json(movies)
       })
       .catch(err => {
