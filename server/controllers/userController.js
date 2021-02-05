@@ -2,6 +2,9 @@ const { User } = require("../models");
 const { generateToken } = require("../helpers/jwt");
 const { compare } = require("../helpers/bcrypt");
 const { OAuth2Client } = require("google-auth-library");
+const axios = require("axios");
+const apiKey = process.env.API_WEATHER;
+
 class ControllerUser {
   static register(req, res, next) {
     const { email, password } = req.body;
@@ -35,8 +38,15 @@ class ControllerUser {
           id: user.id,
           email: user.email,
         });
-        res.status(200).json({
-          access_token,
+        let weather = {};
+
+        axios({
+          method: "get",
+          url: `http://api.weatherstack.com/current?access_key=ae192b36a45f4ed237fb8038d026c7bb&query=Jakarta`,
+        }).then((response) => {
+          const apiResponse = response.data;
+          weather.url_img = apiResponse.current.weather_icons;
+          res.status(200).json({ access_token, weather });
         });
       })
       .catch((err) => {
