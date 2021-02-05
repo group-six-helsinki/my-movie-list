@@ -22,9 +22,7 @@ class ControllerMovie {
 
   static createMovie(req, res, next) {
     const input = {
-      title: req.body.title_search,
-      status: req.body.status || false,
-      UserID: +req.decoded.id,
+      title: req.body.title_search
     };
 
     const api_key = 'c2dcee8f08e877d5fb3559af163b7e36'
@@ -56,8 +54,7 @@ class ControllerMovie {
 
   static createAnime(req, res, next) {
     const input = {
-      title: req.body.title,
-      status: req.body.status || false,
+      title: req.body.title_search
     };
     // const userId = +req.decoded.id;
     // let output = {};
@@ -126,14 +123,18 @@ class ControllerMovie {
 
   static addMovieToDB(req, res, next) {
     const input = {
-      title: req.body.title,
+      title: req.body.title_search,
       status: req.body.status || false,
-      UserID: req.decoded.id
+      UserID: req.decoded.id,
+      sysnopsis: req.body.synopsis,
+      poster: req.body.poster,
+      rating: req.body.rating,
+      release_year: req.body.release_year
     }
 
     Movie.create(input)
       .then(movies => {
-        res.status(200).json(movies)
+        res.status(201).json(movies)
       })
       .catch(err => {
         res.status(500).json(err)
