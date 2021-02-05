@@ -90,6 +90,24 @@ function login() {
   })
 }
 
+function onSignIn(googleUser) {
+  var id_token = googleUser.getAuthResponse().id_token;
+  $.ajax({
+    url: base_url + 'user/googleLogin',
+    method: "POST",
+    data: {
+      googleToken: id_token
+    }
+  })
+  .done(response=>{
+    localStorage.setItem('token', response.token)
+    authenticate()
+  })
+  .fail(err => {
+    console.log(err);
+  })
+}
+
 function formatYear(date) {
   let splittedDate= date.split('-');
   return splittedDate[0]
@@ -127,7 +145,7 @@ function getMyMovie() {
           <li class="list-group-item">${year}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id})">${status}</a>
+          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id, movie.status})">${status}</a>
           <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
         </div>
       </div>
@@ -144,7 +162,7 @@ function getMyMovie() {
 
 function getRecommendedMovie() {
   $.ajax({
-    url: base_url + 'movies',
+    url: base_url + 'movies/movie',
     method: "GET",
     headers: {
       access_token: localStorage.getItem("access_token")
@@ -154,7 +172,6 @@ function getRecommendedMovie() {
     $('#recommended-page-cards').empty();
     //akan looping semua movies punya dia
     movies.forEach(movie => {
-
       $('#recommended-page-cards').append(`
       <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
@@ -165,7 +182,7 @@ function getRecommendedMovie() {
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">${movie.vote_average}</li>
-          <li class="list-group-item">${movie.year}</li>
+          <li class="list-group-item">${movie.released_year}</li>
         </ul>
         <div class="card-body">
           <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
@@ -204,12 +221,15 @@ function addToMyMovie(movie_title) {
   })
 }
 
-function patchMyMovie(id) {
+function patchMyMovie(id, status) {
   $.ajax({
-    url: base_url + id,
+    url: base_url + `movies/${id}`,
     method: "PATCH",
     headers: {
       access_token: localStorage.getItem("access_token")
+    },
+    data: {
+      status
     }
   })
   .done(response=> {
@@ -222,7 +242,6 @@ function patchMyMovie(id) {
 }
 
 function deleteMyMovie(id) {
-  
   $.ajax({
     url: base_url + "movies/" + id,
     method: "DELETE",
@@ -241,6 +260,10 @@ function deleteMyMovie(id) {
 
 function logout() {
   localStorage.clear()
+    var auth2 = gapi.auth2.getAuthInstance()
+      auth2.signOut().then(()=>{
+      console.log('User singed out');
+    })
   auchtenticate()
 }
 
@@ -267,10 +290,11 @@ $(document).ready(()=>{
     getMyMovie()
   })
 
-  // $('#addMovieBtn').on('click', ()=> {
-  //   $("#main-page-cards").hide()
-  //   $('#logreg-forms').hide()
-  // })
+  $('#searchMovieBtn').on('click', ()=> {
+    $("#main-page-cards").hide()
+    $('#logreg-forms').hide()
+    getRecommendedMovie()
+  })
 
   $('#addMovieBtn').on('click', ()=> {
     $('#addMovie').toggle()
