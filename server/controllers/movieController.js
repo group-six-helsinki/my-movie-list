@@ -9,10 +9,6 @@ class ControllerMovie {
       },
     })
       .then((movies) => {
-        console.log(movies);
-        if (movies.length <= 0) {
-          throw { message: "Data not found", status: 404, name: "Custom" };
-        }
         res.status(200).json(movies);
       })
       .catch((err) => {
@@ -123,7 +119,7 @@ class ControllerMovie {
   }
 
   static addMovieToDB(req, res, next) {
-    console.log("masuk controlerr");
+
     const input = {
       title: req.body.title_search,
       status: req.body.status || false,
@@ -138,6 +134,7 @@ class ControllerMovie {
       .then((movies) => {
         console.log(movies, "dari controllerrrrrrrrrrrrrrrr");
         res.status(201).json(movies);
+      
       })
       .catch((err) => {
         next(err);
