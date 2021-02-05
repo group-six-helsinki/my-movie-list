@@ -9,10 +9,13 @@ class ControllerMovie {
       },
     })
       .then((movies) => {
+<<<<<<< HEAD
         //console.log(movies);
         if (movies.length <= 0) {
           throw { message: "Data not found", status: 404, name: "Custom" };
         }
+=======
+>>>>>>> b26c9b77b739fe00b49393f564d5f0129bf97a60
         res.status(200).json(movies);
       })
       .catch((err) => {
@@ -22,7 +25,7 @@ class ControllerMovie {
 
   static createMovie(req, res, next) {
     const input = {
-      title: req.body.title_search
+      title: req.body.title_search,
     };
 
     const api_key = "c2dcee8f08e877d5fb3559af163b7e36";
@@ -54,7 +57,7 @@ class ControllerMovie {
 
   static createAnime(req, res, next) {
     const input = {
-      title: req.body.title_search
+      title: req.body.title_search,
     };
     // const userId = +req.decoded.id;
     // let output = {};
@@ -123,6 +126,7 @@ class ControllerMovie {
   }
 
   static addMovieToDB(req, res, next) {
+
     const input = {
       title: req.body.title_search,
       status: req.body.status || false,
@@ -141,6 +145,9 @@ class ControllerMovie {
         console.log(err.message);
         res.status(500).json(err)
       })
+      .catch((err) => {
+        next(err);
+      });
   }
 }
 
