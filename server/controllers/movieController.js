@@ -22,18 +22,36 @@ class ControllerMovie {
 
   static createMovie(req, res, next) {
     const input = {
-      title: req.body.title,
+      title: req.body.title_search,
       status: req.body.status || false,
-      userID: req.decoded.id,
+      UserID: +req.decoded.id,
     };
 
-    Movie.create(input)
-      .then((response) => {
-        res.status(201).json(response);
+    const api_key = 'c2dcee8f08e877d5fb3559af163b7e36'
+    const queryTitle = input.title.split(' ').join('+')
+
+    axios({
+      method: 'GET',
+      url: `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${queryTitle}`
+    })
+      .then(response => {
+        let output = []
+        // let moviesOutput = {}
+        response.data.results.forEach(movies => {
+          output.push({
+            movie_id: movies.id,
+            title: movies.original_title,
+            synopsis: movies.overview,
+            poster: movies.poster_path,
+            rating: movies.vote_average,
+            release_year: movies.release_date
+          })
+        })
+        res.status(200).json(output)
       })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
+      .catch(err => {
+        res.status(500).json(err)
+      })
   }
 
   static createAnime(req, res, next) {
@@ -41,7 +59,7 @@ class ControllerMovie {
       title: req.body.title,
       status: req.body.status || false,
     };
-    const userId = +req.decoded.id;
+    // const userId = +req.decoded.id;
     // let output = {};
     axios
       .get(`https://api.jikan.moe/v3/search/anime?q=${input.title}&limit=5`)
