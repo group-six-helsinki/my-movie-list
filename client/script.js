@@ -81,7 +81,7 @@ function login() {
     console.log(response.cuaca[0]);
     $('#navbarrrr').append(`
     <li class="nav-item" id="weather">
-    <span class="nav-link">Weather Today: <img src="${response.cuaca[0]}"></span>
+    <span class="nav-link">Weather Today: <img src="${response.cuaca[0]}" width="25" height="25"></span>
     </li>
     `)
     localStorage.setItem('access_token', response.access_token)
@@ -358,7 +358,7 @@ function deleteMyMovie(id) {
 
 function logout() {
   localStorage.clear()
-  $('#weather').empty()
+  $('#weather').remove()
   $('#main-page-cards').empty()
     var auth2 = gapi.auth2.getAuthInstance()
       auth2.signOut().then(()=>{
