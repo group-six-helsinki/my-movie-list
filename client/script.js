@@ -1,5 +1,7 @@
 //const { response } = require("express");
 
+//const movie = require("../server/models/movie");
+
 const base_url = "http://localhost:3000/"
 
 function toggleResetPswd(e){
@@ -39,7 +41,7 @@ function authenticate() {
 function register() {
   const email = $('#user-email').val()
   const password = $('#user-pass').val()
-  console.log(email, password);
+  //console.log(email, password);
   $.ajax({
     url: base_url + 'register',
     method: "POST",
@@ -54,7 +56,7 @@ function register() {
     $('#logreg-forms .form-signup').hide()
   })
   .fail((xhr, text)=>{
-    alert(xhr.responseJSON.name)
+    //alert(xhr.responseJSON.name)
     console.log(xhr, text);
   })
   .always(()=>{
@@ -110,7 +112,7 @@ function onSignIn(googleUser) {
 }
 
 function formatYear(date) {
-  let splittedDate= date.split('-');
+  let splittedDate = date.split('-');
   return splittedDate[0]
 }
 
@@ -132,18 +134,25 @@ function getMyMovie() {
       } else {
         status = 'watch later'
       }
-      let year = formatYear(movie.date);
+
+      let img;
+      if (movie.poster.includes('https')) {
+        img = `${movie.poster}` //jikan
+      } else {
+        img = `https://image.tmdb.org/t/p/w500${movie.poster}` //tmdb
+      }
+      //let year = formatYear(movie.date);
       $('#main-page-cards').append(`
       <div id="cards-${movie.id}">
-      <div class="card p-3" style="width: 18rem;">
-        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+      <div class="card p-3" style="width: 18rem;" style="padding-right:5px; padding-left:5px; padding-top:5%;">
+        <img class="card-img-top" src="${img}" alt="movie poster">
         <div class="card-body">
-          <h5 class="card-title">${movie.original_title}</h5>
-          <p class="card-text">${movie.overview}</p>
+          <h5 class="card-title">${movie.title}</h5>
+          <p class="card-text">${movie.synopsis}</p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">${movie.vote_average}</li>
-          <li class="list-group-item">${year}</li>
+          <li class="list-group-item">Ratings: ${movie.rating}</li>
+          <li class="list-group-item">Year: ${movie.release_year}</li>
         </ul>
         <div class="card-body">
           <a href="#" class="card-link" onclick="patchMyMovie(${movie.id, movie.status})">${status}</a>
@@ -175,9 +184,11 @@ function searchMovie() {
   })
   .done(movies => {
     $('#recommended-page-cards').empty();
-    console.log(movies);
+    //console.log(movies);
     //akan looping semua movies punya dia
     movies.forEach(movie => {
+
+      //console.log(img);
       $('#recommended-page-cards').append(`
       <div class="recommended-movie" style="padding-right:5px; padding-left:5px; padding-top:5%;">
       <div class="card" style="width: 18rem;">
@@ -191,7 +202,7 @@ function searchMovie() {
           <li class="list-group-item">Year: ${formatYear(movie.release_year)}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="addToMyMovie('${movie.title}', '${movie.synopsis}', '${movie.poster}','${movie.rating}','${formatYear(movie.release_year)}',)">Add to My List</a>
+          <a href="#" class="card-link" onclick="addToMyMovie('${movie.title}', '${movie.synopsis}', '${movie.poster}','${movie.rating}','${formatYear(movie.release_year)}')">Add to My List</a>
         </div>
       </div>
     </div>
@@ -224,7 +235,7 @@ function olahKata(descriptions) {
 
 function searchAnime() {
   const title_search = $('#title_search').val()
-  console.log(title_search);
+  //console.log(title_search);
   $.ajax({
     url: base_url + 'movies/anime',
     method: "POST",
@@ -237,7 +248,7 @@ function searchAnime() {
   })
   .done(movies => {
     $('#recommended-page-cards').empty();
-    console.log(movies);
+    //console.log(movies);
     //akan looping semua movies punya dia
     movies.forEach(movie => {
       $('#recommended-page-cards').append(`
@@ -249,11 +260,11 @@ function searchAnime() {
           <p class="card-text">${movie.synopsis}</p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">${movie.rating}</li>
-          <li class="list-group-item">${formatYear(movie.release_year)}</li>
+          <li class="list-group-item">Ratings: ${movie.rating}</li>
+          <li class="list-group-item">Year: ${formatYear(movie.release_year)}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
+          <a href="#" class="card-link" onclick="addToMyMovie('${movie.title}', '${movie.synopsis}', '${movie.poster}','${movie.rating}','${formatYear(movie.release_year)}')">Add to My List</a>
         </div>
       </div>
     </div>
@@ -278,19 +289,23 @@ function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, m
     },
     data: {
       title_search: movie_title,
-      status: false,
-      synopsis: movie_synopsis,
+      //status,
+      synopsis: olahKata(movie_synopsis),
       poster: movie_poster,
       rating: movie_rating,
       release_year: movie_release_year
     }
   })
   .done(res => {
-    console.log(res);
-    authenticate();
+    //console.log('ajaxxxxxxxxxxxxxxxxxxx');
+    //console.log(res);
+
+    Swal.fire('added to my movie!')
+    //alert('added to my movie!')
+    //authenticate();
   })
   .fail((xhr,text)=>{
-    alert(xhr.responseJSON.error)
+    //alert(xhr.responseJSON.error)
     console.log(xhr, text);
   })
 }
@@ -327,7 +342,7 @@ function deleteMyMovie(id) {
     $(`#card-${id}`).remove()
   })
   .fail((xhr,text)=>{
-    alert(xhr.responseJSON.error)
+    //alert(xhr.responseJSON.error)
     console.log(xhr, text);
   })
 }
@@ -364,6 +379,7 @@ $(document).ready(()=>{
     getMyMovie()
     $('#recommended-page-cards').hide()
     $('#addMovie').hide()
+    $("#main-page-cards").show()
   })
 
   $('#searchMovieBtn').on('click', ()=> {
@@ -397,4 +413,3 @@ $(document).ready(()=>{
     
   })
 })
-
