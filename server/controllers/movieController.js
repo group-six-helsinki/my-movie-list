@@ -124,25 +124,21 @@ class ControllerMovie {
       });
   }
 
-  // static movie(req, res, next) {
-  //   const api_key = "c2dcee8f08e877d5fb3559af163b7e36";
-  //   const { title } = req.body;
-  //   const queryTitle = title.split(" ").join("+");
-  //   let output = [];
-  //   axios({
-  //     method: "GET",
-  //     url: `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${queryTitle}&limit=1`,
-  //   })
-  //     .then((response) => {
-  //       console.log(response.data, "<<<<<<<<<<<====response");
-  //       output.push(response.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err, "error");
-  //     });
+  static addMovieToDB(req, res, next) {
+    const input = {
+      title: req.body.title,
+      status: req.body.status || false,
+      UserID: req.decoded.id
+    }
 
-  //   return output;
-  // }
+    Movie.create(input)
+      .then(movies => {
+        res.status(200).json(movies)
+      })
+      .catch(err => {
+        res.status(500).json(err)
+      })
+  }
 }
 
 module.exports = ControllerMovie;
