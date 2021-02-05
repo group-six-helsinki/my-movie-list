@@ -123,6 +123,7 @@ class ControllerMovie {
   }
 
   static addMovieToDB(req, res, next) {
+    console.log('masuk controlerr');
     const input = {
       title: req.body.title_search,
       status: req.body.status || false,
@@ -135,6 +136,7 @@ class ControllerMovie {
 
     Movie.create(input)
       .then(movies => {
+        console.log(movies, 'dari controllerrrrrrrrrrrrrrrr');
         res.status(201).json(movies)
       })
       .catch(err => {
