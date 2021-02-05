@@ -15,8 +15,7 @@ class ControllerUser {
         });
       })
       .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
+        next(err);
       });
   }
 
@@ -41,8 +40,7 @@ class ControllerUser {
         });
       })
       .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
+        next(err);
       });
   }
 
@@ -81,7 +79,7 @@ class ControllerUser {
         res.status(201).json({ access_token });
       })
       .catch((err) => {
-        res.status(400).json(err);
+        next(err);
       });
   }
 }
