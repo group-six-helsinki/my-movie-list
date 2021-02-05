@@ -27,31 +27,31 @@ class ControllerMovie {
       UserID: +req.decoded.id,
     };
 
-    const api_key = 'c2dcee8f08e877d5fb3559af163b7e36'
-    const queryTitle = input.title.split(' ').join('+')
+    const api_key = "c2dcee8f08e877d5fb3559af163b7e36";
+    const queryTitle = input.title.split(" ").join("+");
 
     axios({
-      method: 'GET',
-      url: `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${queryTitle}`
+      method: "GET",
+      url: `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${queryTitle}`,
     })
-      .then(response => {
-        let output = []
+      .then((response) => {
+        let output = [];
         // let moviesOutput = {}
-        response.data.results.forEach(movies => {
+        response.data.results.forEach((movies) => {
           output.push({
             movie_id: movies.id,
             title: movies.original_title,
             synopsis: movies.overview,
             poster: movies.poster_path,
             rating: movies.vote_average,
-            release_year: movies.release_date
-          })
-        })
-        res.status(200).json(output)
+            release_year: movies.release_date,
+          });
+        });
+        res.status(200).json(output);
       })
-      .catch(err => {
-        res.status(500).json(err)
-      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   }
 
   static createAnime(req, res, next) {
@@ -69,10 +69,11 @@ class ControllerMovie {
         let output = [];
         dataAnime.forEach((el) => {
           output.push({
+            anime_id: el.mal_id,
             title: el.title,
-            sinopsis: el.synopsis,
-            score: el.score,
-            poster_path: el.image_url,
+            synopsis: el.synopsis,
+            rating: el.score,
+            poster: el.image_url,
             release_year: el.start_date,
           });
           // output.title = el.title;
