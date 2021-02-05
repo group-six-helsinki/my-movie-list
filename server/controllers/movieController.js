@@ -8,8 +8,16 @@ class ControllerMovie {
         userID: req.decoded.id,
       },
     })
-      .then((movies) => {})
-      .catch((err) => {});
+      .then((movies) => {
+        if (!movies) {
+          throw { message: "Data not found", status: 404 };
+        }
+        res.status(200).json(movies);
+      })
+      .catch((err) => {
+        const status = err.status || 500;
+        res.status(status).json(err);
+      });
   }
 
   static createMovie(req, res, next) {
@@ -34,7 +42,6 @@ class ControllerMovie {
       status: req.body.status || false,
     };
     const userId = +req.decoded.id;
-    console.log(req.decoded);
     axios
       .get(`https://api.jikan.moe/v3/search/anime?q=${input.title}&limit=1`)
 
