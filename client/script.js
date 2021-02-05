@@ -2,14 +2,7 @@
 
 const base_url = "http://localhost:3000/";
 
-<<<<<<< HEAD
 function toggleResetPswd(e) {
-=======
-const base_url = "http://localhost:3000/"
-
-
-function toggleResetPswd(e){
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
   e.preventDefault();
   $("#logreg-forms .form-signin").toggle(); // display:block or none
   $("#logreg-forms .form-reset").toggle(); // display:block or none
@@ -29,22 +22,11 @@ function authenticate() {
     $("#main-page-cards").hide();
     $("#addMovie").hide();
   } else {
-<<<<<<< HEAD
     $("#navbar").show();
     $("#main-page-cards").show();
     $("#logreg-forms").hide();
     $("#addMovie").hide();
     getMyMovie();
-    // $('#logreg-forms #cancel_reset').hide()
-    // $('#logreg-forms #btn-signup').hide()
-    // $('#logreg-forms #cancel_signup').hide()
-=======
-    $('#navbar').show()
-    $('#main-page-cards').show()
-    $('#logreg-forms').hide()
-    $('#addMovie').hide()
-    getMyMovie()
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
   }
 }
 
@@ -76,46 +58,34 @@ function register() {
 }
 
 function login() {
-<<<<<<< HEAD
   const email = $("#inputEmail").val();
   const password = $("#inputPassword").val();
-  //console.log(email, password);
-=======
-  const email = $('#inputEmail').val()
-  const password = $('#inputPassword').val()
   console.log(email, password);
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
   $.ajax({
     url: base_url + "login",
     method: "POST",
     data: {
       email,
-<<<<<<< HEAD
       password,
     },
-=======
-      password
-    }
   })
-  .done(response=>{
-
-    console.log(response.cuaca[0]);
-    $('#navbarrrr').append(`
+    .done((response) => {
+      console.log(response.cuaca[0]);
+      $("#navbarrrr").append(`
     <li class="nav-item" id="weather">
     <span class="nav-link">Weather Today: <img src="${response.cuaca[0]}"></span>
     </li>
-    `)
-    localStorage.setItem('access_token', response.access_token)
-    authenticate()
-  })
-  .fail((xhr, text)=> {
-    console.log(xhr, text);
-  })
-  .always(()=>{
-    $('#inputEmail').val("")
-    $('#inputPassword').val("")
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
-  })
+    `);
+      localStorage.setItem("access_token", response.access_token);
+      authenticate();
+    })
+    .fail((xhr, text) => {
+      console.log(xhr, text);
+    })
+    .always(() => {
+      $("#inputEmail").val("");
+      $("#inputPassword").val("");
+    })
     .done((response) => {
       //console.log(response);
       localStorage.setItem("access_token", response.access_token);
@@ -162,8 +132,8 @@ function getMyMovie() {
       access_token: localStorage.getItem("access_token"),
     },
   })
-<<<<<<< HEAD
     .done((movies) => {
+      console.log(movies);
       $("#main-page-cards").empty();
       //akan looping semua movies punya dia
       movies.forEach((movie) => {
@@ -173,38 +143,22 @@ function getMyMovie() {
         } else {
           status = "watch later";
         }
-        let year = formatYear(movie.date);
-        $("#main-page-cards").append(`
-      <div id="cards-${movie.id}">
-      <div class="card p-3" style="width: 18rem;">
-        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
-=======
-  .done(movies => {
-    console.log(movies);
-    $('#main-page-cards').empty();
-    //akan looping semua movies punya dia
-    movies.forEach(movie => {
-      let status;
-      if (movie.status){
-        status = 'watched'
-      } else {
-        status = 'watch later'
-      }
 
-      let img;
-      if (movie.poster.includes('https')) {
-        img = `${movie.poster}` //jikan
-      } else {
-        img = `https://image.tmdb.org/t/p/w500${movie.poster}` //tmdb
-      }
-      //let year = formatYear(movie.date);
-      //console.log(movie.id, '======================================');
-      
-      $('#main-page-cards').append(`
-      <div id="cards-${movie.id}" style="padding-right:5px; padding-left:5px; padding-top:5%;">
+        let img;
+        if (movie.poster.includes("https")) {
+          img = `${movie.poster}`; //jikan
+        } else {
+          img = `https://image.tmdb.org/t/p/w500${movie.poster}`; //tmdb
+        }
+        //let year = formatYear(movie.date);
+        //console.log(movie.id, '======================================');
+
+        $("#main-page-cards").append(`
+      <div id="cards-${
+        movie.id
+      }" style="padding-right:5px; padding-left:5px; padding-top:5%;">
       <div class="card p-3" style="width: 18rem;" >
         <img class="card-img-top" src="${img}" alt="movie poster">
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
         <div class="card-body">
           <h5 class="card-title">${movie.original_title}</h5>
           <p class="card-text">${movie.overview}</p>
@@ -214,17 +168,12 @@ function getMyMovie() {
           <li class="list-group-item">${year}</li>
         </ul>
         <div class="card-body">
-<<<<<<< HEAD
           <a href="#" class="card-link" onclick="patchMyMovie(${
             (movie.id, movie.status)
           })">${status}</a>
           <a href="#" class="card-link" onclick="deleteMyMovie(${
             movie.id
           })">Delete</a>
-=======
-
-          <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
         </div>
       </div>
     </div>
@@ -347,7 +296,6 @@ function searchAnime() {
     });
 }
 
-<<<<<<< HEAD
 function addToMyMovie(
   movie_title,
   movie_synopsis,
@@ -355,14 +303,14 @@ function addToMyMovie(
   movie_rating,
   movie_release_year
 ) {
-  //console.log(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year);
+  console.log(
+    movie_title,
+    movie_synopsis,
+    movie_poster,
+    movie_rating,
+    movie_release_year
+  );
   //const movie_title = $('').val()
-=======
-
-function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year) {
-  console.log(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year);
- //const movie_title = $('').val()
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
   $.ajax({
     url: base_url + "movies",
     method: "POST",
@@ -374,26 +322,21 @@ function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, m
       synopsis: movie_synopsis,
       poster: movie_poster,
       rating: movie_rating,
-<<<<<<< HEAD
       release_year: movie_release_year,
     },
-=======
-      release_year: movie_release_year
-    }
   })
-  .done(res => {
-   //console.log('ajaxxxxxxxxxxxxxxxxxxx');
-    //console.log(res);
+    .done((res) => {
+      //console.log('ajaxxxxxxxxxxxxxxxxxxx');
+      //console.log(res);
 
-    Swal.fire('added to my movie!')
-    //alert('added to my movie!')
-    //authenticate();
-  })
-  .fail((xhr,text)=>{
-    //alert(xhr.responseJSON.error)
-    console.log(xhr, text);
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
-  })
+      Swal.fire("added to my movie!");
+      //alert('added to my movie!')
+      //authenticate();
+    })
+    .fail((xhr, text) => {
+      //alert(xhr.responseJSON.error)
+      console.log(xhr, text);
+    })
     .done((res) => {
       console.log(res);
       authenticate();
@@ -428,23 +371,18 @@ function deleteMyMovie(id) {
     url: base_url + "movies/" + id,
     method: "DELETE",
     headers: {
-<<<<<<< HEAD
-      token: localStorage.getItem("access_token"),
+      access_token: localStorage.getItem("access_token"),
     },
-=======
-      access_token: localStorage.getItem('access_token')
-    }
   })
-  .done(()=>{
-    Swal.fire('Movie deleted!')
-    //$(`#card-${id}`).remove()
-    getMyMovie()
-  })
-  .fail((xhr,text)=>{
-    Swal.fire(xhr.responseJSON.error)
-    console.log(xhr, text);
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
-  })
+    .done(() => {
+      Swal.fire("Movie deleted!");
+      //$(`#card-${id}`).remove()
+      getMyMovie();
+    })
+    .fail((xhr, text) => {
+      Swal.fire(xhr.responseJSON.error);
+      console.log(xhr, text);
+    })
     .done(() => {
       $(`#card-${id}`).remove();
     })
@@ -455,8 +393,9 @@ function deleteMyMovie(id) {
 }
 
 function logout() {
-<<<<<<< HEAD
   localStorage.clear();
+  $("#weather").empty();
+  $("#main-page-cards").empty();
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(() => {
     console.log("User singed out");
@@ -464,41 +403,24 @@ function logout() {
   authenticate();
 }
 
-$(document).ready(() => {
-=======
-  localStorage.clear()
-  $('#weather').empty()
-  $('#main-page-cards').empty()
-    var auth2 = gapi.auth2.getAuthInstance()
-      auth2.signOut().then(()=>{
-      console.log('User singed out');
-    })
-  authenticate()
-}
-
 function getWeather() {
   $.ajax({
-    url: base_url + 'weather',
+    url: base_url + "weather",
     method: "GET",
     headers: {
-      access_token: localStorage.getItem('access_token')
-    }
+      access_token: localStorage.getItem("access_token"),
+    },
   })
-  .done((response)=> {
-    
-  })
-  .fail((xhr,text)=> {
-    console.log(xhr, text)
-  })
+    .done((response) => {})
+    .fail((xhr, text) => {
+      console.log(xhr, text);
+    });
 }
 
-
-$(document).ready(()=>{
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
+$(document).ready(() => {
   //cek apakah login atau belum
   authenticate();
   //untuk tombol di login dan register page
-<<<<<<< HEAD
   $("#logreg-forms #cancel_reset").click(toggleResetPswd);
   $("#logreg-forms #btn-signup").click(toggleSignUp);
   $("#logreg-forms #cancel_signup").click(toggleSignUp);
@@ -513,81 +435,38 @@ $(document).ready(()=>{
     register();
   });
 
-  $("#homeBtn").on("click", () => {
+  $("#homeBtn").on("click", (e) => {
+    e.preventDefault();
     getMyMovie();
     $("#recommended-page-cards").hide();
     $("#addMovie").hide();
+    $("#main-page-cards").show();
   });
 
-  $("#searchMovieBtn").on("click", () => {
+  $("#searchMovieBtn").on("click", (e) => {
+    e.preventDefault();
     $("#main-page-cards").hide();
     $("#logreg-forms").hide();
     $("#recommended-page-cards").show();
     searchMovie();
   });
 
-  $("#searchAnimeBtn").on("click", () => {
+  $("#searchAnimeBtn").on("click", (e) => {
+    e.preventDefault();
     $("#main-page-cards").hide();
     $("#logreg-forms").hide();
     $("#recommended-page-cards").show();
     searchAnime();
   });
 
-  $("#addMovieBtn").on("click", () => {
+  $("#addMovieBtn").on("click", (e) => {
+    e.preventDefault();
     $("#addMovie").toggle();
     $("#recommended-page-cards").show();
     $("#main-page-cards").hide();
     $("#logreg-forms").hide();
     getMyMovie();
   });
-=======
-  $('#logreg-forms #cancel_reset').click(toggleResetPswd);
-  $('#logreg-forms #btn-signup').click(toggleSignUp);
-  $('#logreg-forms #cancel_signup').click(toggleSignUp);
-
-  $('#loginbtn').on('click', (e)=> {
-    e.preventDefault()
-    login()
-  })
-
-  $('#registerbtn').on('click', (e)=> {
-    e.preventDefault()
-    register()
-  })
-
-  $("#homeBtn").on('click', (e)=> {
-    e.preventDefault()
-    getMyMovie()
-    $('#recommended-page-cards').hide()
-    $('#addMovie').hide()
-    $("#main-page-cards").show()
-  })
-
-  $('#searchMovieBtn').on('click', (e)=> {
-    e.preventDefault()
-    $("#main-page-cards").hide()
-    $('#logreg-forms').hide()
-    $('#recommended-page-cards').show()
-    searchMovie()
-  })
-
-  $('#searchAnimeBtn').on('click', (e)=>{
-    e.preventDefault()
-    $("#main-page-cards").hide()
-    $('#logreg-forms').hide()
-    $('#recommended-page-cards').show()
-    searchAnime()
-  })
-  
-  $('#addMovieBtn').on('click', (e) => {
-    e.preventDefault()
-    $('#addMovie').toggle()
-    $('#recommended-page-cards').show()
-    $("#main-page-cards").hide()
-    $('#logreg-forms').hide()
-    getMyMovie()
-  })
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
 
   //tombol logout
   $("#logoutbtn").on("click", (e) => {

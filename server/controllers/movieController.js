@@ -126,21 +126,16 @@ class ControllerMovie {
       synopsis: req.body.synopsis,
       poster: req.body.poster,
       rating: req.body.rating,
-      release_year: req.body.release_year
-    }
-    
+      release_year: req.body.release_year,
+    };
+
     Movie.create(input)
-<<<<<<< HEAD
       .then((movies) => {
         res.status(201).json(movies);
-=======
-      .then(movies => {
-        res.status(201).json(movies)
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.message);
-        res.status(500).json(err)
->>>>>>> ed27d74ade74fd33615816555312d1edecfb5120
+        res.status(500).json(err);
       })
       .catch((err) => {
         next(err);
