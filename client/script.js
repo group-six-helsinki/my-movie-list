@@ -90,6 +90,24 @@ function login() {
   })
 }
 
+function onSignIn(googleUser) {
+  var id_token = googleUser.getAuthResponse().id_token;
+  $.ajax({
+    url: base_url + 'user/googleLogin',
+    method: "POST",
+    data: {
+      googleToken: id_token
+    }
+  })
+  .done(response=>{
+    localStorage.setItem('token', response.token)
+    authenticate()
+  })
+  .fail(err => {
+    console.log(err);
+  })
+}
+
 function formatYear(date) {
   let splittedDate= date.split('-');
   return splittedDate[0]
@@ -142,29 +160,34 @@ function getMyMovie() {
 }
 
 
-function getRecommendedMovie() {
+function searchMovie() {
+  const title_search = $('#title_search').val()
   $.ajax({
-    url: base_url + 'movies',
-    method: "GET",
+    url: base_url + 'movies/movie',
+    method: "POST",
     headers: {
       access_token: localStorage.getItem("access_token")
+    },
+    data : {
+      title_search
     }
   })
   .done(movies => {
     $('#recommended-page-cards').empty();
+    //console.log(movies);
     //akan looping semua movies punya dia
     movies.forEach(movie => {
       $('#recommended-page-cards').append(`
       <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+        <img class="card-img-top" src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="movie poster">
         <div class="card-body">
           <h5 class="card-title">${movie.title}</h5>
-          <p class="card-text">${movie.overview}</p>
+          <p class="card-text">${movie.synopsis}</p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">${movie.vote_average}</li>
-          <li class="list-group-item">${movie.year}</li>
+          <li class="list-group-item">${movie.rating}</li>
+          <li class="list-group-item">${formatYear(movie.release_year)}</li>
         </ul>
         <div class="card-body">
           <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
@@ -181,8 +204,52 @@ function getRecommendedMovie() {
 }
 
 
+function searchAnime() {
+  const title_search = $('#title_search').val()
+  $.ajax({
+    url: base_url + 'movies/anime',
+    method: "POST",
+    headers: {
+      access_token: localStorage.getItem("access_token")
+    },
+    data : {
+      title_search
+    }
+  })
+  .done(movies => {
+    $('#recommended-page-cards').empty();
+    console.log(movies);
+    //akan looping semua movies punya dia
+    movies.forEach(movie => {
+      $('#recommended-page-cards').append(`
+      <div class="recommended-movie">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+        <div class="card-body">
+          <h5 class="card-title">${movie.title}</h5>
+          <p class="card-text">${movie.sinopsis}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">${movie.score}</li>
+          <li class="list-group-item">${formatYear(movie.release_year)}</li>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link" onclick="addToMyMovie(${movie.title})">Add to My List</a>
+        </div>
+      </div>
+    </div>
+      `)
+    })
+  })
+  .fail((xhr, text)=>{ 
+    console.log(xhr, text);
+  })
+  
+}
+
 
 function addToMyMovie(movie_title) {
+ //const movie_title = $('').val()
   $.ajax({
     url: base_url+"movies/movie",
     method: "POST",
@@ -242,6 +309,10 @@ function deleteMyMovie(id) {
 
 function logout() {
   localStorage.clear()
+    var auth2 = gapi.auth2.getAuthInstance()
+      auth2.signOut().then(()=>{
+      console.log('User singed out');
+    })
   auchtenticate()
 }
 
@@ -266,13 +337,22 @@ $(document).ready(()=>{
 
   $("#homeBtn").on('click', ()=> {
     getMyMovie()
+    $('#recommended-page-cards').hide()
   })
 
-  // $('#addMovieBtn').on('click', ()=> {
-  //   $("#main-page-cards").hide()
-  //   $('#logreg-forms').hide()
-  // })
-
+  $('#searchMovieBtn').on('click', ()=> {
+    $("#main-page-cards").hide()
+    $('#logreg-forms').hide()
+    $('#recommended-page-cards').show()
+    searchMovie()
+  })
+  $('#searchAnimeBtn').on('click', ()=>{
+    $("#main-page-cards").hide()
+    $('#logreg-forms').hide()
+    $('#recommended-page-cards').show()
+    searchAnime()
+  })
+  
   $('#addMovieBtn').on('click', ()=> {
     $('#addMovie').toggle()
     $("#main-page-cards").hide()
