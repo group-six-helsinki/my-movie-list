@@ -22,11 +22,11 @@ class ControllerUser {
       });
   }
 
-  static login(req, res, next) {
+  static async login(req, res, next) {
     const { email, password } = req.body;
-    User.findOne({ where: { email } })
-      .then((user) => {
-        const compared = compare(password, user.password);
+    try {
+      const user = await User.findOne({where: {email}})
+      const compared = compare(password, user.password);
         if (!user || !compared) {
           throw {
             message: "Wrong password or email",
@@ -38,20 +38,47 @@ class ControllerUser {
           id: user.id,
           email: user.email,
         });
-        let weather = {};
-
-        axios({
+        let weather = await axios({
           method: "get",
           url: `http://api.weatherstack.com/current?access_key=ae192b36a45f4ed237fb8038d026c7bb&query=Jakarta`,
-        }).then((response) => {
-          const apiResponse = response.data;
-          weather.url_img = apiResponse.current.weather_icons;
-          res.status(200).json({ access_token, weather });
         });
-      })
-      .catch((err) => {
-        next(err);
-      });
+
+        let cuaca = weather.data.current.weather_icons
+        res.status(200).json({ access_token, cuaca });
+
+    } catch (error) {
+      console.log(error);
+      next(error)
+    }
+
+    // User.findOne({ where: { email } })
+    //   .then((user) => {
+    //     const compared = compare(password, user.password);
+    //     if (!user || !compared) {
+    //       throw {
+    //         message: "Wrong password or email",
+    //         status: 401,
+    //         name: "LoginError",
+    //       };
+    //     }
+    //     const access_token = generateToken({
+    //       id: user.id,
+    //       email: user.email,
+    //     });
+    //     let weather = {};
+
+    //     return axios({
+    //       method: "get",
+    //       url: `http://api.weatherstack.com/current?access_key=ae192b36a45f4ed237fb8038d026c7bb&query=Jakarta`,
+    //     }).then((response) => {
+    //       const apiResponse = response.data;
+    //       weather.url_img = apiResponse.current.weather_icons;
+    //       res.status(200).json({ access_token, weather });
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     next(err);
+    //   });
   }
 
   static loginGoogle(req, res, next) {

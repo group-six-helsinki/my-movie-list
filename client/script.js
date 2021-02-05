@@ -4,6 +4,7 @@
 
 const base_url = "http://localhost:3000/"
 
+
 function toggleResetPswd(e){
   e.preventDefault();
   $('#logreg-forms .form-signin').toggle() // display:block or none
@@ -30,9 +31,6 @@ function authenticate() {
     $('#logreg-forms').hide()
     $('#addMovie').hide()
     getMyMovie()
-    // $('#logreg-forms #cancel_reset').hide()
-    // $('#logreg-forms #btn-signup').hide()
-    // $('#logreg-forms #cancel_signup').hide()
   }
 }
 
@@ -69,7 +67,7 @@ function register() {
 function login() {
   const email = $('#inputEmail').val()
   const password = $('#inputPassword').val()
-  //console.log(email, password);
+  console.log(email, password);
   $.ajax({
     url: base_url + 'login',
     method: "POST",
@@ -79,7 +77,13 @@ function login() {
     }
   })
   .done(response=>{
-    //console.log(response);
+
+    console.log(response.cuaca[0]);
+    $('#navbarrrr').append(`
+    <li class="nav-item" id="weather">
+    <span class="nav-link">Weather Today: <img src="${response.cuaca[0]}"></span>
+    </li>
+    `)
     localStorage.setItem('access_token', response.access_token)
     authenticate()
   })
@@ -125,6 +129,7 @@ function getMyMovie() {
     }
   })
   .done(movies => {
+    console.log(movies);
     $('#main-page-cards').empty();
     //akan looping semua movies punya dia
     movies.forEach(movie => {
@@ -142,9 +147,11 @@ function getMyMovie() {
         img = `https://image.tmdb.org/t/p/w500${movie.poster}` //tmdb
       }
       //let year = formatYear(movie.date);
+      //console.log(movie.id, '======================================');
+      
       $('#main-page-cards').append(`
-      <div id="cards-${movie.id}">
-      <div class="card p-3" style="width: 18rem;" style="padding-right:5px; padding-left:5px; padding-top:5%;">
+      <div id="cards-${movie.id}" style="padding-right:5px; padding-left:5px; padding-top:5%;">
+      <div class="card p-3" style="width: 18rem;" >
         <img class="card-img-top" src="${img}" alt="movie poster">
         <div class="card-body">
           <h5 class="card-title">${movie.title}</h5>
@@ -155,7 +162,7 @@ function getMyMovie() {
           <li class="list-group-item">Year: ${movie.release_year}</li>
         </ul>
         <div class="card-body">
-          <a href="#" class="card-link" onclick="patchMyMovie(${movie.id, movie.status})">${status}</a>
+
           <a href="#" class="card-link" onclick="deleteMyMovie(${movie.id})">Delete</a>
         </div>
       </div>
@@ -279,7 +286,7 @@ function searchAnime() {
 
 
 function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year) {
-  //console.log(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year);
+  console.log(movie_title, movie_synopsis, movie_poster, movie_rating, movie_release_year);
  //const movie_title = $('').val()
   $.ajax({
     url: base_url+"movies",
@@ -297,7 +304,7 @@ function addToMyMovie(movie_title, movie_synopsis, movie_poster, movie_rating, m
     }
   })
   .done(res => {
-    //console.log('ajaxxxxxxxxxxxxxxxxxxx');
+   //console.log('ajaxxxxxxxxxxxxxxxxxxx');
     //console.log(res);
 
     Swal.fire('added to my movie!')
@@ -335,25 +342,45 @@ function deleteMyMovie(id) {
     url: base_url + "movies/" + id,
     method: "DELETE",
     headers: {
-      token: localStorage.getItem('access_token')
+      access_token: localStorage.getItem('access_token')
     }
   })
   .done(()=>{
-    $(`#card-${id}`).remove()
+    Swal.fire('Movie deleted!')
+    //$(`#card-${id}`).remove()
+    getMyMovie()
   })
   .fail((xhr,text)=>{
-    //alert(xhr.responseJSON.error)
+    Swal.fire(xhr.responseJSON.error)
     console.log(xhr, text);
   })
 }
 
 function logout() {
   localStorage.clear()
+  $('#weather').empty()
+  $('#main-page-cards').empty()
     var auth2 = gapi.auth2.getAuthInstance()
       auth2.signOut().then(()=>{
       console.log('User singed out');
     })
   authenticate()
+}
+
+function getWeather() {
+  $.ajax({
+    url: base_url + 'weather',
+    method: "GET",
+    headers: {
+      access_token: localStorage.getItem('access_token')
+    }
+  })
+  .done((response)=> {
+    
+  })
+  .fail((xhr,text)=> {
+    console.log(xhr, text)
+  })
 }
 
 
@@ -375,28 +402,32 @@ $(document).ready(()=>{
     register()
   })
 
-  $("#homeBtn").on('click', ()=> {
+  $("#homeBtn").on('click', (e)=> {
+    e.preventDefault()
     getMyMovie()
     $('#recommended-page-cards').hide()
     $('#addMovie').hide()
     $("#main-page-cards").show()
   })
 
-  $('#searchMovieBtn').on('click', ()=> {
+  $('#searchMovieBtn').on('click', (e)=> {
+    e.preventDefault()
     $("#main-page-cards").hide()
     $('#logreg-forms').hide()
     $('#recommended-page-cards').show()
     searchMovie()
   })
 
-  $('#searchAnimeBtn').on('click', ()=>{
+  $('#searchAnimeBtn').on('click', (e)=>{
+    e.preventDefault()
     $("#main-page-cards").hide()
     $('#logreg-forms').hide()
     $('#recommended-page-cards').show()
     searchAnime()
   })
   
-  $('#addMovieBtn').on('click', ()=> {
+  $('#addMovieBtn').on('click', (e) => {
+    e.preventDefault()
     $('#addMovie').toggle()
     $('#recommended-page-cards').show()
     $("#main-page-cards").hide()
