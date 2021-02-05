@@ -19,6 +19,8 @@ router.post("/movies/anime", ControllerMovie.createAnime);
 router.patch("/movies/:id", ControllerMovie.doneWatching);
 router.delete("/movies/:id", ControllerMovie.deleteMovie);
 
+router.post("/movies", ControllerMovie.addMovieToDB)
+
 // route test
 // router.get("/test", ControllerMovie.movie);
 
