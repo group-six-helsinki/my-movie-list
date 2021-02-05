@@ -9,14 +9,14 @@ class ControllerMovie {
       },
     })
       .then((movies) => {
-        if (!movies) {
-          throw { message: "Data not found", status: 404 };
+        console.log(movies);
+        if (movies.length <= 0) {
+          throw { message: "Data not found", status: 404, name: "Custom" };
         }
         res.status(200).json(movies);
       })
       .catch((err) => {
-        const status = err.status || 500;
-        res.status(status).json(err);
+        next(err);
       });
   }
 
@@ -59,45 +59,34 @@ class ControllerMovie {
       title: req.body.title,
       status: req.body.status || false,
     };
-    const userId = +req.decoded.id;
+    // const userId = +req.decoded.id;
+    // let output = {};
     axios
-      .get(`https://api.jikan.moe/v3/search/anime?q=${input.title}&limit=1`)
+      .get(`https://api.jikan.moe/v3/search/anime?q=${input.title}&limit=5`)
 
       .then((response) => {
-        let output = {};
-        // let output = []
-        const data = response.data.results;
-        console.log(data);
-        data.forEach((el) => {
-          // output.push({
-          //   title: el.title,
-          //   sinopsis: el.synopsis,
-          //   score: el.score,
-          //   poster_path: el.image_url,
-          //   release_year: el.start_date,
-          // });
-          output.title = el.title;
-          output.sinopsis = el.synopsis;
-          output.rating = el.score;
-          output.poster_path = el.image_url;
-          output.release_year = el.start_date;
+        const dataAnime = response.data.results;
+        let output = [];
+        dataAnime.forEach((el) => {
+          output.push({
+            title: el.title,
+            sinopsis: el.synopsis,
+            score: el.score,
+            poster_path: el.image_url,
+            release_year: el.start_date,
+          });
+          // output.title = el.title;
+          // output.sinopsis = el.synopsis;
+          // output.rating = el.score;
+          // output.poster_path = el.image_url;
+          // output.release_year = el.start_date;
         });
-        return Movie.create({
-          title: output.title,
-          status: input.status,
-          UserID: userId,
-        });
-      })
-      .then((data) => {
-        res.status(201).json(data);
+        res.status(200).json(output);
       })
       .catch((err) => {
-        console.log(err);
-        res.json(err);
+        next(err);
       });
   }
-
-  static editMovieList(req, res, next) {}
 
   static doneWatching(req, res, next) {
     const movieId = +req.params.id;
@@ -107,7 +96,7 @@ class ControllerMovie {
         res.status(200).json(response[1]);
       })
       .catch((err) => {
-        res.status(500).json(err);
+        next(err);
       });
   }
 
@@ -123,15 +112,37 @@ class ControllerMovie {
             message: "Movie watchlist deleted successfully",
           });
         } else {
-          res.status(404).json({
+          throw {
             message: "Data not found",
-          });
+            status: 404,
+            name: "Custom",
+          };
         }
       })
       .catch((err) => {
-        res.status(500).json(err);
+        next(err);
       });
   }
+
+  // static movie(req, res, next) {
+  //   const api_key = "c2dcee8f08e877d5fb3559af163b7e36";
+  //   const { title } = req.body;
+  //   const queryTitle = title.split(" ").join("+");
+  //   let output = [];
+  //   axios({
+  //     method: "GET",
+  //     url: `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${queryTitle}&limit=1`,
+  //   })
+  //     .then((response) => {
+  //       console.log(response.data, "<<<<<<<<<<<====response");
+  //       output.push(response.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err, "error");
+  //     });
+
+  //   return output;
+  // }
 }
 
 module.exports = ControllerMovie;

@@ -16,11 +16,10 @@ router.use(authorize);
 router.get("/movies", ControllerMovie.showAll);
 router.post("/movies/movie", ControllerMovie.createMovie);
 router.post("/movies/anime", ControllerMovie.createAnime);
-router.put("/movies/:id", ControllerMovie.editMovieList);
 router.patch("/movies/:id", ControllerMovie.doneWatching);
 router.delete("/movies/:id", ControllerMovie.deleteMovie);
 
 // route test
-// router.get("/anime", ControllerMovie.anime);
+// router.get("/test", ControllerMovie.movie);
 
 module.exports = router;

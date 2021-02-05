@@ -5,16 +5,16 @@ const authorize = function (req, res, next) {
   User.findByPk(userId)
     .then((user) => {
       if (!user) {
-        throw { message: "data not found", status: 404, name: "custom" };
+        throw { message: "Data not found", status: 404, name: "Custom" };
       }
       if (user) {
         next();
       } else {
-        throw { message: "not authorized", status: 400, name: "custom" };
+        throw { message: "Not authorized", status: 400, name: "Custom" };
       }
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 module.exports = authorize;
