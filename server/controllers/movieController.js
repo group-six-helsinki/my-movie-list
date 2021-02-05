@@ -9,13 +9,6 @@ class ControllerMovie {
       },
     })
       .then((movies) => {
-<<<<<<< HEAD
-        //console.log(movies);
-        if (movies.length <= 0) {
-          throw { message: "Data not found", status: 404, name: "Custom" };
-        }
-=======
->>>>>>> b26c9b77b739fe00b49393f564d5f0129bf97a60
         res.status(200).json(movies);
       })
       .catch((err) => {
