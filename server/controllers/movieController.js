@@ -127,7 +127,7 @@ class ControllerMovie {
       title: req.body.title_search,
       status: req.body.status || false,
       UserID: req.decoded.id,
-      sysnopsis: req.body.synopsis,
+      synopsis: req.body.synopsis,
       poster: req.body.poster,
       rating: req.body.rating,
       release_year: req.body.release_year
