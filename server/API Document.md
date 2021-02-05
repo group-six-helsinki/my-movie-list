@@ -220,7 +220,7 @@ Showing all ToDo from database
 
 
 
-## Create Movie
+## Search Movie
 
 Make a watching list movie
 
@@ -239,11 +239,26 @@ Make a watching list movie
 - #### Data Request
 
   ```javascript
-  title: req.body.title,
-  status: req.body.status || false,
-  userID: req.decoded.id,
+  title: req.body.title
   ```
 
+- #### 3rd API
+
+  ```javascript
+  API_type: TMDb
+  base_url: "https://api.themoviedb.org/3"
+  method: 'GET'
+  url: '/search/movie?api_key=(api_key)&query=(queryTitle)'
+  
+  response =>{
+    movie_id,
+    title,
+    synopsis,
+    rating,
+    poster,
+  	release_year
+  }
+  
 - #### Succes Response
 
   `Success create a list movie`
@@ -264,7 +279,7 @@ Make a watching list movie
       msg: "Please enter typedata boolean"
   	}
     isIn(status)=>{
-       msg: "Please enter typedata boolean"
+      msg: "Please enter typedata boolean"
     }
     code/status: 400
   }
@@ -278,7 +293,7 @@ Make a watching list movie
 
 
 
-## Create Anime
+## Search Anime
 
 Make a watching list movie
 
@@ -297,9 +312,7 @@ Make a watching list movie
 - #### Data Request
 
   ```javascript
-  title: req.body.title,
-  status: req.body.status || false,
-  userID: req.decoded.id,
+  title: req.body.title
   ```
 
 - #### 3rd API
@@ -456,6 +469,62 @@ Make a watching list movie
   	code/status: 404
   }
   if server error => {
+    msg: 'Internal server error'
+  	code/status: 500
+  }
+  ```
+
+  ## Create a Movie/Anime List
+
+- #### Url
+
+  `/movies`
+
+- #### Method
+
+  `POST`
+
+- #### Url Params
+
+  ##### Required: `None`
+
+- #### Data Request:
+
+ ```javascript
+  {
+    title: req.body.title_search,
+    status: req.body.status default value false,
+    UserID: req.decoded.id,
+    sysnopsis: req.body.synopsis,
+    poster: req.body.poster,
+    rating: req.body.rating,
+    release_year: req.body.release_year
+  }
+  ```
+
+- #### Succes Response
+
+  `Create a movielist to database`
+
+  ##### `code: 201`
+
+  ```javascript
+  json({
+  	id: movie id,
+    title: movie title,
+    status: movie status,
+    UserID: movie user ID,
+    synopsis: movie synopsis,
+    poster: movie poster image url,
+    rating: movie rating,
+    release_year: movie release year
+  })
+  ```
+
+- #### Error Response
+
+  ```javascript
+  server error => {
     msg: 'Internal server error'
   	code/status: 500
   }
