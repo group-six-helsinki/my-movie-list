@@ -15,7 +15,7 @@ function toggleSignUp(e){
 }
 
 
-function auchtenticate() {
+function authenticate() {
   if (!localStorage.getItem("access_token")) {
     //show login only
     $('#logreg-forms').show()
@@ -79,7 +79,7 @@ function login() {
   .done(response=>{
     //console.log(response);
     localStorage.setItem('access_token', response.access_token)
-    auchtenticate()
+    authenticate()
   })
   .fail((xhr, text)=> {
     console.log(xhr, text);
@@ -93,14 +93,15 @@ function login() {
 function onSignIn(googleUser) {
   var id_token = googleUser.getAuthResponse().id_token;
   $.ajax({
-    url: base_url + 'user/googleLogin',
+    url: base_url + 'loginGoogle',
     method: "POST",
     data: {
       googleToken: id_token
     }
   })
   .done(response=>{
-    localStorage.setItem('token', response.token)
+    console.log(response);
+    localStorage.setItem('access_token', response.access_token)
     authenticate()
   })
   .fail(err => {
@@ -174,13 +175,13 @@ function searchMovie() {
   })
   .done(movies => {
     $('#recommended-page-cards').empty();
-    //console.log(movies);
+    console.log(movies);
     //akan looping semua movies punya dia
     movies.forEach(movie => {
       $('#recommended-page-cards').append(`
       <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="movie poster">
+        <img class="card-img-top" src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="movie poster" >
         <div class="card-body">
           <h5 class="card-title">${movie.title}</h5>
           <p class="card-text">${movie.synopsis}</p>
@@ -200,12 +201,16 @@ function searchMovie() {
   .fail((xhr, text)=>{ 
     console.log(xhr, text);
   })
+  .always(()=>{
+    $('#title_search').val("")
+  })
   
 }
 
 
 function searchAnime() {
   const title_search = $('#title_search').val()
+  console.log(title_search);
   $.ajax({
     url: base_url + 'movies/anime',
     method: "POST",
@@ -224,13 +229,13 @@ function searchAnime() {
       $('#recommended-page-cards').append(`
       <div class="recommended-movie">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="${movie.poster_path}" alt="movie poster">
+        <img class="card-img-top" src="${movie.poster}" alt="movie poster">
         <div class="card-body">
           <h5 class="card-title">${movie.title}</h5>
-          <p class="card-text">${movie.sinopsis}</p>
+          <p class="card-text">${movie.synopsis}</p>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">${movie.score}</li>
+          <li class="list-group-item">${movie.rating}</li>
           <li class="list-group-item">${formatYear(movie.release_year)}</li>
         </ul>
         <div class="card-body">
@@ -262,7 +267,7 @@ function addToMyMovie(movie_title) {
     }
   })
   .done(res => {
-    auchtenticate();
+    authenticate();
   })
   .fail((xhr,text)=>{
     alert(xhr.responseJSON.error)
@@ -313,13 +318,13 @@ function logout() {
       auth2.signOut().then(()=>{
       console.log('User singed out');
     })
-  auchtenticate()
+  authenticate()
 }
 
 
 $(document).ready(()=>{
   //cek apakah login atau belum
-  auchtenticate()
+  authenticate()
   //untuk tombol di login dan register page
   $('#logreg-forms #cancel_reset').click(toggleResetPswd);
   $('#logreg-forms #btn-signup').click(toggleSignUp);
@@ -338,6 +343,7 @@ $(document).ready(()=>{
   $("#homeBtn").on('click', ()=> {
     getMyMovie()
     $('#recommended-page-cards').hide()
+    $('#addMovie').hide()
   })
 
   $('#searchMovieBtn').on('click', ()=> {
@@ -346,6 +352,7 @@ $(document).ready(()=>{
     $('#recommended-page-cards').show()
     searchMovie()
   })
+
   $('#searchAnimeBtn').on('click', ()=>{
     $("#main-page-cards").hide()
     $('#logreg-forms').hide()
@@ -355,6 +362,7 @@ $(document).ready(()=>{
   
   $('#addMovieBtn').on('click', ()=> {
     $('#addMovie').toggle()
+    $('#recommended-page-cards').show()
     $("#main-page-cards").hide()
     $('#logreg-forms').hide()
     getMyMovie()
@@ -364,6 +372,8 @@ $(document).ready(()=>{
   $('#logoutbtn').on('click', (e)=>{
     e.preventDefault()
     logout()
+    $('#recommended-page-cards').empty()
+    $('#recommended-page-cards').hide()
     
   })
 })
