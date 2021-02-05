@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Movie extends Model {
     /**
@@ -11,40 +9,41 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Movie.belongsTo(models.User, { foreignKey: 'UserID' })
+      Movie.belongsTo(models.User, { foreignKey: "UserID" });
     }
-  };
-  Movie.init({
-    title: {
-      type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          args: true,
-          msg: 'Please enter a title for movie/anime'
-        }
-      }
-    },
-    status: {
-      type: DataTypes.BOOLEAN,
-      validate: {
-        isIn: {
-          args: [[true, false]],
-          msg: 'Please enter typedata boolean'
-        }
-      }
-    },
-    UserID: {
-      type: DataTypes.INTEGER,
-      validate: {
+  }
+  Movie.init(
+    {
+      title: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Please enter a title for movie/anime",
+          },
+        },
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+        validate: {
+          isIn: {
+            args: [[true, false]],
+            msg: "Please enter typedata boolean",
+          },
+        },
+      },
+      UserID: {
+        type: DataTypes.INTEGER,
         allowNull: {
           args: false,
-          msg: 'Please enter a user ID'
-        }
-      }
+          msg: "Please enter a user ID",
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Movie",
     }
-  }, {
-    sequelize,
-    modelName: 'Movie',
-  });
+  );
   return Movie;
 };
